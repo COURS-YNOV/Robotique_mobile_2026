@@ -2,7 +2,7 @@ import machine, time
 from machine import Pin
 
 class Sensor_Captor:
-    def __init__(self, trigger_pin, echo_pin, distance_max = 400*2):
+    def __init__(self, trigger_pin, echo_pin, distance_max = 400):
         self.trigger = Pin(trigger_pin, mode=Pin.OUT)
         self.echo = Pin(echo_pin, mode=Pin.IN)
         self.distance_max = distance_max*2
