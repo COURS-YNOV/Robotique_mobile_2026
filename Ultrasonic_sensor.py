@@ -22,5 +22,4 @@ class Sensor_Captor:
         return cms
     
     def request_ultrasonic(self):
-        distance = self.distance()
-        return distance
+        return self.distance()
