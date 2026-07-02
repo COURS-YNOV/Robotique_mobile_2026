@@ -1,0 +1,113 @@
+#include <unity.h>
+#include "CommandParser.h"
+
+void setUp() {}
+void tearDown() {}
+
+void test_sequence_simple() {
+    ParsedCommand c = parseCommand("F200 R90 F100");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Sequence), static_cast<int>(c.kind));
+    TEST_ASSERT_EQUAL_UINT32(3, c.moves.size());
+    TEST_ASSERT_EQUAL(static_cast<int>(MoveType::Forward), static_cast<int>(c.moves[0].type));
+    TEST_ASSERT_EQUAL_INT(200, c.moves[0].value);
+    TEST_ASSERT_EQUAL(static_cast<int>(MoveType::TurnRight), static_cast<int>(c.moves[1].type));
+    TEST_ASSERT_EQUAL_INT(90, c.moves[1].value);
+}
+
+void test_wait_minuscule() {
+    ParsedCommand c = parseCommand("w5");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(MoveType::Wait), static_cast<int>(c.moves[0].type));
+    TEST_ASSERT_EQUAL_INT(5, c.moves[0].value);
+}
+
+void test_stop() {
+    ParsedCommand c = parseCommand("STOP");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Stop), static_cast<int>(c.kind));
+}
+
+void test_speed() {
+    ParsedCommand c = parseCommand("SPEED 180");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Speed), static_cast<int>(c.kind));
+    TEST_ASSERT_EQUAL_INT(180, c.speed);
+}
+
+void test_speed_hors_bornes_rejete() {
+    ParsedCommand c = parseCommand("SPEED 999");
+    TEST_ASSERT_FALSE(c.ok);
+}
+
+void test_autospeed() {
+    ParsedCommand c = parseCommand("AUTOSPEED 120");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::AutoSpeed), static_cast<int>(c.kind));
+    TEST_ASSERT_EQUAL_INT(120, c.speed);
+}
+
+void test_autospeed_hors_bornes_rejete() {
+    ParsedCommand c = parseCommand("AUTOSPEED 999");
+    TEST_ASSERT_FALSE(c.ok);
+}
+
+void test_autothreshold() {
+    ParsedCommand c = parseCommand("AUTOTHRESHOLD 35");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::AutoThreshold), static_cast<int>(c.kind));
+    TEST_ASSERT_EQUAL_INT(35, c.thresholdCm);
+}
+
+void test_autothreshold_hors_bornes_rejete() {
+    ParsedCommand c1 = parseCommand("AUTOTHRESHOLD 1");
+    TEST_ASSERT_FALSE(c1.ok);
+    ParsedCommand c2 = parseCommand("AUTOTHRESHOLD 500");
+    TEST_ASSERT_FALSE(c2.ok);
+}
+
+void test_manuel() {
+    ParsedCommand c = parseCommand("MF");
+    TEST_ASSERT_TRUE(c.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Manual), static_cast<int>(c.kind));
+    TEST_ASSERT_EQUAL(static_cast<int>(ManualDir::Forward), static_cast<int>(c.manual));
+}
+
+void test_auto() {
+    ParsedCommand c1 = parseCommand("AUTO");
+    TEST_ASSERT_TRUE(c1.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Auto), static_cast<int>(c1.kind));
+
+    ParsedCommand c2 = parseCommand("auto");
+    TEST_ASSERT_TRUE(c2.ok);
+    TEST_ASSERT_EQUAL(static_cast<int>(CommandKind::Auto), static_cast<int>(c2.kind));
+}
+
+void test_token_invalide_rejette_toute_la_sequence() {
+    ParsedCommand c = parseCommand("F200 X10");
+    TEST_ASSERT_FALSE(c.ok);
+    TEST_ASSERT_EQUAL_UINT32(0, c.moves.size());
+}
+
+void test_ligne_vide_rejetee() {
+    ParsedCommand c = parseCommand("   ");
+    TEST_ASSERT_FALSE(c.ok);
+}
+
+int main(int, char**) {
+    UNITY_BEGIN();
+    RUN_TEST(test_sequence_simple);
+    RUN_TEST(test_wait_minuscule);
+    RUN_TEST(test_stop);
+    RUN_TEST(test_speed);
+    RUN_TEST(test_speed_hors_bornes_rejete);
+    RUN_TEST(test_autospeed);
+    RUN_TEST(test_autospeed_hors_bornes_rejete);
+    RUN_TEST(test_autothreshold);
+    RUN_TEST(test_autothreshold_hors_bornes_rejete);
+    RUN_TEST(test_manuel);
+    RUN_TEST(test_auto);
+    RUN_TEST(test_token_invalide_rejette_toute_la_sequence);
+    RUN_TEST(test_ligne_vide_rejetee);
+    return UNITY_END();
+}
