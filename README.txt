@@ -1,4 +1,4 @@
-# 🐱 Robot Chat — ESP32-C6 / MicroPython
+#Robot Chat — ESP32-C6 / MicroPython
 
 Système robotique mobile autonome télécommandé via WiFi.
 
@@ -50,7 +50,7 @@ Télécommande WiFi ──► ESP32-C6 ──► L298N ──► 2 Moteurs DC
 | LiPo 2S 7,4 V 6 200 mAh | Alimentation principale | 1 |
 | Résistances 1 kΩ / 2 kΩ | Pont diviseur ECHO HC-SR04 | 1 jeu |
 
-> ⚠️ **Obligatoire** — Le signal ECHO du HC-SR04 est en 5 V.  
+> **Obligatoire** — Le signal ECHO du HC-SR04 est en 5 V.  
 > Câblez un pont diviseur : `ECHO → R1(1kΩ) → GPIO20 → R2(2kΩ) → GND` (V_out = 3,33 V ✓)
 
 ---
@@ -274,5 +274,3 @@ Ouvrir `http://<IP_ROBOT>` dans un navigateur sur le même réseau WiFi.
 ---
 
 ## Licence
-
-Projet académique — Juillet 2026
